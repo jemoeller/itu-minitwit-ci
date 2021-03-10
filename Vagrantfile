@@ -20,7 +20,11 @@ Vagrant.configure("2") do |config|
     end
 
     server.vm.hostname = "minitwit-ci-server"
-    server.vm.provision "shell", inline: <<-SHELL
+    server.vm.provision "shell", 
+    env: {
+      "DOCKER_USERNAME"=>ENV['DOCKER_USERNAME'],
+      "DOCKER_PASSWORD"=> ENV['DOCKER_PASSWORD']},
+    inline: <<-SHELL
 
     echo -e "\nVerifying that docker works ...\n"
     docker run --rm hello-world
@@ -33,8 +37,8 @@ Vagrant.configure("2") do |config|
     echo ". $HOME/.bashrc" >> $HOME/.bash_profile
 
     echo -e "\nConfiguring credentials as environment variables...\n"
-    echo "export DOCKER_USERNAME='<YOUR USERNAME>'" >> $HOME/.bash_profile
-    echo "export DOCKER_PASSWORD='<YOUR PASSWORD>'" >> $HOME/.bash_profile
+    echo "export DOCKER_USERNAME='$DOCKER_USERNAME'" >> $HOME/.bash_profile
+    echo "export DOCKER_PASSWORD='$DOCKER_PASSWORD'" >> $HOME/.bash_profile
     source $HOME/.bash_profile
 
     echo -e "\nVagrant setup done ..."
